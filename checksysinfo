@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+magneta="\033[35m"
+greentext="\033[32m"
+red="\033[31;40m"
+bold="\033[1m"
+normal="\033[0m"
+cyon="\033[36m"
+colorp="\033[3;32;40m"
+printf -v logdate "%(%Y-%m-%d)T"
+
+freespace=$(df -h / | awk 'NR==2 {print $4}')
+mem=$(free -h | awk 'NR==2 {print $4}')
+sudo echo -e "\e[1;33m [+] Try Running the Script with Root privileges. \e[0m"
+echo -e  $red "\t\t \033[5mMaerih Chekers CySA\033[0m"$normal
+echo -e $bold "Quick System Report for " $greentext"$HOSTNAME" $normal
+printf "\tAll current running proccess saved in: processes.txt \t%s\n" $(ps -ef > processes.txt)
+sleep 2
+Ordi(){
+	declare -i i=1
+	for f in $@; do
+		echo "$i:$f"
+		(( i +=1 ))
+	done
+	echo $FUNCNAME
+}
+printf "\tMachine Id/Hostname:  hostname.txt \t%s\n" $(hostnamectl > hostname.txt)
+sleep 1;
+printf "\tSaves current logs(about 2weeks logs) if not tempered in: logs.txt \t%s\n" $(cat /var/log/auth.log.1 > logs.txt)
+sleep 3;
+printf "\tKernel Release:\t%s\n" $(uname -r)
+sleep 2;
+printf "\tSerial Number: \t%s\n" $(sudo dmidecode -s system-serial-number)
+sleep 1;
+printf "\tBash Version:\t%s\n" $BASH_VERSION
+sleep 2;
+printf "\tFree Storage:\t%s\n" $freespace
+printf "\tFree Memory :\t%s\n" $mem
+sleep 2;
+echo;
+echo -e $cyon $bold "ALL SUID commands for Priv Escalation" $greentext
+sleep 3;
+echo;
+printf "%40s: %5s\n"  "Saved as in the home Dir as - " "suid.txt" 
+# $(sudo find / -perm -4000 & > suid.txt & )
+echo -e $colorp
+echo -e $bold "All Information saved in the following files." $normal
+Ordi processes.txt logs.txt hostname.txt suid.txt OpenPorts.txt
+
+echo -e $magneta $bold "Network Config Information" $normal 
+sleep 3;
+printf  "\tMachine Ip address:\t%s\n"  $(hostname -I) 
+sleep 2;
+printf "\tListening ports processes: OpePorts.txt\t%s\n" $(ss -anpst > OpenPorts.txt)
+sleep 3;
+echo;
+echo;
+echo -e  $red "\t\t \033[5mMaerih Chekers CySA\033[0m"$normal
+echo;
+sleep 2;
+printf "\tReport Generated on:\t%s\n" $logdate
+
